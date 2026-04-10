@@ -13,7 +13,7 @@ import {
   LogOut,
   ChevronRight,
   Globe,
-  Mail // Imported for the Messages link
+  Mail 
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -38,7 +38,7 @@ export default function AdminLayout({
       exact: false 
     },
     { 
-      name: "Video Library", 
+      name: "Videos", 
       href: "/admin/videos", 
       icon: Video,
       exact: false 
@@ -70,7 +70,7 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen w-full bg-white">
-      {/* Sidebar - RESTORED FULL CODE */}
+      {/* Sidebar - Desktop Only */}
       <aside className="w-64 bg-slate-50 border-r border-sky-100 flex-shrink-0 hidden md:flex flex-col sticky top-0 h-screen">
         {/* Logo Section */}
         <div className="p-8">
@@ -139,9 +139,41 @@ export default function AdminLayout({
         </div>
       </aside>
 
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-sky-100 flex justify-around items-center py-3 px-2 z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        {navItems.map((item) => {
+          const isActive = item.exact 
+            ? pathname === item.href 
+            : pathname.startsWith(item.href);
+          const Icon = item.icon;
+
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex flex-col items-center gap-1 transition-colors ${
+                isActive ? "text-sky-600" : "text-slate-400"
+              }`}
+            >
+              <Icon size={20} />
+              <span className="text-[10px] font-bold uppercase tracking-tighter">
+                {item.name.split(' ')[0]}
+              </span>
+            </Link>
+          );
+        })}
+        <button 
+          onClick={handleLogout}
+          className="flex flex-col items-center gap-1 text-slate-400"
+        >
+          <LogOut size={20} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Exit</span>
+        </button>
+      </nav>
+
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-h-screen bg-white overflow-x-hidden">
-        <div className="flex-1 p-8"> {/* Added padding for dashboard content */}
+      <main className="flex-1 flex flex-col min-h-screen bg-white overflow-x-hidden pb-20 md:pb-0">
+        <div className="flex-1 p-4 md:p-8">
           {children}
         </div>
       </main>
