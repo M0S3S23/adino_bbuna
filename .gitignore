@@ -33,9 +33,18 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Supabase
+.supabase/
+supabase/.temp/
+
+# Local Netlify/Vercel folders
+.vercel
+.turbo
+
+# Local dev databases
+*.db
+*.sqlite
