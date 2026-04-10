@@ -85,7 +85,7 @@ export default function Articles() {
             {categories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => setActiveCategory(cat || "")}
                 className={`px-4 py-1.5 text-xs uppercase tracking-wider transition rounded ${
                   activeCategory === cat
                     ? "bg-sky-500 text-white"
