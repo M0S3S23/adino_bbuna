@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, User } from "lucide-react";
+import { Eye, EyeOff, Lock, User, Loader2 } from "lucide-react"; // Added Loader2
 import { supabase } from "@/lib/supabase";
 
 export default function AdminLogin() {
@@ -25,14 +25,15 @@ export default function AdminLogin() {
       password,
     });
 
-    setLoading(false);
-
     if (error) {
       setError(error.message);
+      setLoading(false);
       return;
     }
 
+    // Refresh is important to ensure middleware recognizes the new cookie
     router.push("/admin/dashboard");
+    router.refresh(); 
   };
 
   return (
@@ -131,7 +132,7 @@ export default function AdminLogin() {
               className="w-full py-3.5 bg-sky-500 text-white text-sm tracking-wider uppercase hover:bg-sky-600 transition disabled:opacity-50 flex items-center justify-center gap-2 rounded"
             >
               {loading ? (
-                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 "Sign In"
               )}
