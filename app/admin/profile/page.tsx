@@ -6,14 +6,14 @@ import Link from "next/link";
 import { 
   Save, Check, Loader2, User, Mail, Phone, MapPin, Camera, 
   Linkedin, Twitter, Facebook, Youtube, Instagram, Globe, AlertCircle,
-  Briefcase, GraduationCap, Plus, Trash2, ShieldCheck 
+  Briefcase, GraduationCap, Plus, Trash2, ShieldCheck, Layout
 } from "lucide-react";
 
 export default function AdminProfile() {
   const [form, setForm] = useState({
     name: "",
     title: "",
-    hero_subtitle: "",
+    hero_subtitle: "", // This maps to your DB column
     bio: "",
     email: "",
     phone: "",
@@ -39,8 +39,6 @@ export default function AdminProfile() {
   useEffect(() => {
     fetchProfileData();
 
-    // REAL-TIME SYNC: This ensures if the client updates something while you have 
-    // the dashboard open, your screen updates automatically without refreshing.
     const channel = supabase
       .channel('schema-db-changes')
       .on('postgres_changes', 
@@ -63,8 +61,6 @@ export default function AdminProfile() {
       setLoading(true);
       setError(null);
 
-      // We use .limit(1) and .maybeSingle() without filtering by user_id.
-      // This ensures any admin sees the first (main) profile record.
       let { data: profile, error: fetchError } = await supabase
         .from("profile")
         .select("*")
@@ -74,7 +70,6 @@ export default function AdminProfile() {
 
       if (fetchError) throw fetchError;
 
-      // If no profile exists at all (brand new database), create the one-and-only record
       if (!profile) {
         const { data: newProfile, error: createError } = await supabase
           .from("profile")
@@ -241,6 +236,22 @@ export default function AdminProfile() {
                 <input name="title" value={form.title} onChange={handleChange} className="w-full bg-slate-50 border border-sky-100 text-slate-800 px-4 py-3 text-sm rounded-xl outline-none focus:bg-white focus:border-sky-500" />
               </div>
             </div>
+
+            {/* NEW: HERO SUBTITLE FIELD */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-sky-600 uppercase tracking-wider flex items-center gap-2">
+                <Layout size={12} /> Homepage Hero Subtitle
+              </label>
+              <input 
+                name="hero_subtitle" 
+                value={form.hero_subtitle} 
+                onChange={handleChange} 
+                placeholder="e.g. Delivering strategic oversight and complex digital solutions."
+                className="w-full bg-slate-50 border border-sky-100 text-slate-800 px-4 py-3 text-sm rounded-xl outline-none focus:bg-white focus:border-sky-500 font-medium" 
+              />
+              <p className="text-[9px] text-slate-400 italic">This is the text that appears under your name on the main homepage.</p>
+            </div>
+
             <div className="space-y-1.5">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Biography</label>
               <textarea name="bio" rows={4} value={form.bio} onChange={handleChange} className="w-full bg-slate-50 border border-sky-100 text-slate-800 px-4 py-3 text-sm rounded-xl outline-none focus:bg-white focus:border-sky-500 resize-none" />
@@ -429,25 +440,6 @@ export default function AdminProfile() {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Security Section */}
-          <div className="border border-sky-100 p-8 rounded-3xl bg-slate-50 shadow-sm flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white rounded-2xl border border-sky-100 text-sky-600 shadow-sm">
-                <ShieldCheck size={24} />
-              </div>
-              <div>
-                <h2 className="text-slate-900 font-bold text-lg">Account Security</h2>
-                <p className="text-slate-500 text-xs">Manage your password and authentication settings.</p>
-              </div>
-            </div>
-            <Link 
-              href="/admin/settings" 
-              className="px-6 py-3 bg-white border border-sky-100 text-sky-600 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-sky-600 hover:text-white transition-all shadow-sm"
-            >
-              Change Password
-            </Link>
           </div>
 
           <div className="flex justify-end pb-20">
